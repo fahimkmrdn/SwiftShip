@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwiftShip - Compare Rates</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-brand shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-4" href="index.html">SwiftShip</a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active fw-medium" aria-current="page" href="rate_comparison.html">Rate Comparison</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="about_us.html">About Us</a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <a href="admin/admin_login.html" class="btn btn-outline-light px-4 rounded-pill">Admin Login</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow-1 py-5">
+        <div class="container">
+            
+            <div class="text-center mb-5">
+                <h1 class="text-brand fw-bold">Compare Shipping Rates</h1>
+                <p class="text-muted">Find the best carrier for your parcel based on price and delivery speed.</p>
+            </div>
+
+            <div class="row g-4 justify-content-center">
+                
+                <div class="col-12 col-lg-5">
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-body p-4 p-md-5">
+                            <h4 class="fw-bold mb-4"><i class="bi bi-calculator text-brand me-2"></i>Rate Calculator</h4>
+                            
+                            <div id="error-msg" class="alert alert-danger d-none fw-medium py-2 px-3" role="alert">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i> <span id="error-text"></span>
+                            </div>
+
+                            <form id="compareForm" onsubmit="handleCompare(event)">
+                                <div class="mb-3">
+                                    <label for="originInput" class="form-label text-muted fw-semibold small text-uppercase">Origin Postcode / City</label>
+                                    <input type="text" class="form-control form-control-lg bg-light" id="originInput" placeholder="e.g., 13200 Kepala Batas" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="destInput" class="form-label text-muted fw-semibold small text-uppercase">Destination Postcode / City</label>
+                                    <input type="text" class="form-control form-control-lg bg-light" id="destInput" placeholder="e.g., 50400 Kuala Lumpur" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="weightInput" class="form-label text-muted fw-semibold small text-uppercase">Parcel Weight (kg)</label>
+                                    <div class="input-group input-group-lg">
+                                        <input type="number" class="form-control bg-light" id="weightInput" step="0.1" min="0.1" placeholder="0.0" required>
+                                        <span class="input-group-text bg-light text-muted">kg</span>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-brand btn-lg w-100 rounded-pill fw-medium">Calculate Rates</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-lg-7">
+                    <div id="resultsWrapper" class="d-none h-100 d-flex flex-column justify-content-center">
+                        
+                        <div class="card shadow-sm border-0 rounded-4 mb-3 border-start border-success border-4 overflow-hidden position-relative">
+                            <div class="position-absolute top-0 end-0 bg-success text-white px-3 py-1 rounded-bottom-start fw-bold small">Best Value</div>
+                            <div class="card-body p-4">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h5 class="fw-bold mb-1">Pos Laju</h5>
+                                        <div class="text-muted small"><i class="bi bi-clock me-1"></i>Est. Delivery: 2-3 Days</div>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="fs-6 text-muted mb-0 lh-1">RM</div>
+                                        <div class="fs-2 fw-bold text-dark lh-1" id="posLajuRate">0.00</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card shadow-sm border-0 rounded-4 mb-3">
+                            <div class="card-body p-4">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h5 class="fw-bold mb-1">J&T Express</h5>
+                                        <div class="text-muted small"><i class="bi bi-clock me-1"></i>Est. Delivery: 1-2 Days</div>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="fs-6 text-muted mb-0 lh-1">RM</div>
+                                        <div class="fs-2 fw-bold text-dark lh-1" id="jntRate">0.00</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card shadow-sm border-0 rounded-4 border-start border-primary border-4 position-relative">
+                            <div class="position-absolute top-0 end-0 bg-primary text-white px-3 py-1 rounded-bottom-start fw-bold small">Fastest</div>
+                            <div class="card-body p-4">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h5 class="fw-bold mb-1">DHL Express</h5>
+                                        <div class="text-muted small"><i class="bi bi-lightning-charge-fill text-warning me-1"></i>Next Day Delivery</div>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="fs-6 text-muted mb-0 lh-1">RM</div>
+                                        <div class="fs-2 fw-bold text-dark lh-1" id="dhlRate">0.00</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                    <div id="emptyState" class="h-100 d-flex flex-column align-items-center justify-content-center text-center p-5 bg-white shadow-sm rounded-4 border-0">
+                        <i class="bi bi-box2 text-light" style="font-size: 4rem;"></i>
+                        <h4 class="text-muted mt-3">Ready to calculate</h4>
+                        <p class="text-muted small mb-0">Enter your parcel details on the left to instantly compare rates across our supported carriers.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <button class="chatbot-btn" onclick="toggleChat()" title="Chat with AI Support">
+        <i class="bi bi-chat-dots-fill"></i>
+    </button>
+
+    <div class="chatbot-window" id="chatWindow">
+        <div class="chatbot-header">
+            <span><i class="bi bi-robot me-2"></i>SwiftShip AI Assistant</span>
+            <button class="btn-close btn-close-white" onclick="toggleChat()" aria-label="Close"></button>
+        </div>
+        <div class="chatbot-messages" id="chatMessages">
+            <div class="message bot-message">Hello! I'm your SwiftShip logistics assistant. Need help comparing rates or choosing the best carrier?</div>
+        </div>
+        <div class="chatbot-input-area">
+            <input type="text" id="chatInput" placeholder="Ask a question..." onkeypress="handleChatEnter(event)">
+            <button onclick="sendChatMessage()" title="Send"><i class="bi bi-send-fill"></i></button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function handleCompare(event) {
+            event.preventDefault(); 
+            
+            const errorMsgDiv = document.getElementById('error-msg');
+            const errorText = document.getElementById('error-text');
+            const resultsWrapper = document.getElementById('resultsWrapper');
+            const emptyState = document.getElementById('emptyState');
+            
+            errorMsgDiv.classList.add('d-none');
+            
+            const weightInput = parseFloat(document.getElementById('weightInput').value);
+
+            if (isNaN(weightInput) || weightInput <= 0) {
+                errorText.innerText = "Please enter a valid weight greater than 0 kg.";
+                errorMsgDiv.classList.remove('d-none');
+                resultsWrapper.classList.add('d-none');
+                emptyState.classList.remove('d-none');
+                return;
+            }
+
+            const baseRatePosLaju = 7.50;
+            const baseRateJnt = 8.50;
+            const baseRateDHL = 15.00;
+
+            const calcPosLaju = (5.00 + (baseRatePosLaju * weightInput)).toFixed(2);
+            const calcJnt = (6.00 + (baseRateJnt * weightInput)).toFixed(2);
+            const calcDHL = (10.00 + (baseRateDHL * weightInput)).toFixed(2);
+
+            document.getElementById('posLajuRate').innerText = calcPosLaju;
+            document.getElementById('jntRate').innerText = calcJnt;
+            document.getElementById('dhlRate').innerText = calcDHL;
+
+            emptyState.classList.add('d-none');
+            resultsWrapper.classList.remove('d-none');
+            
+            if(window.innerWidth < 992) {
+                setTimeout(() => {
+                    resultsWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            }
+        }
+
+        function toggleChat() {
+            const chatWindow = document.getElementById('chatWindow');
+            if (chatWindow.style.display === "none" || chatWindow.style.display === "") {
+                chatWindow.style.display = "flex";
+                document.getElementById('chatInput').focus();
+            } else {
+                chatWindow.style.display = "none";
+            }
+        }
+
+        function sendChatMessage() {
+            const inputElement = document.getElementById('chatInput');
+            const message = inputElement.value.trim();
+            if (message === "") return;
+
+            const chatMessages = document.getElementById('chatMessages');
+
+            const userMsgDiv = document.createElement('div');
+            userMsgDiv.className = 'message user-message';
+            userMsgDiv.innerText = message;
+            chatMessages.appendChild(userMsgDiv);
+
+            inputElement.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            setTimeout(() => {
+                const botMsgDiv = document.createElement('div');
+                botMsgDiv.className = 'message bot-message';
+                botMsgDiv.innerText = "I'm currently a prototype interface, but I will soon connect to the Google Gemini API to analyze those rates for you!";
+                chatMessages.appendChild(botMsgDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 1000);
+        }
+
+        function handleChatEnter(event) {
+            if (event.key === "Enter") {
+                sendChatMessage();
+            }
+        }
+    </script>
+</body>
+</html>

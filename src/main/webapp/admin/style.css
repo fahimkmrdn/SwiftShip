@@ -1,0 +1,139 @@
+@charset "UTF-8";
+
+/* Custom Dark Theme Overrides for Admin Portal */
+body {
+    background-color: #0f172a; /* Slate 900 */
+    color: #cbd5e1; /* Slate 300 */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow-x: hidden;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    width: 260px;
+    background-color: #1e293b; /* Slate 800 */
+    border-right: 1px solid #334155; /* Slate 700 */
+    height: 100vh;
+    position: sticky;
+    top: 0;
+}
+
+.brand-header h1 {
+    color: #f8fafc;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.nav-item-link {
+    color: #94a3b8;
+    font-weight: 500;
+    padding: 1rem 1.5rem;
+    border-left: 4px solid transparent;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nav-item-link:hover {
+    background-color: rgba(51, 65, 85, 0.5);
+    color: #f8fafc;
+}
+
+.nav-item-link.active {
+    background-color: #0f172a;
+    color: #60a5fa; /* Blue 400 */
+    border-left: 4px solid #3b82f6; /* Blue 500 */
+}
+
+/* Topbar & Cards */
+.topbar {
+    height: 70px;
+    background-color: #1e293b;
+    border-bottom: 1px solid #334155;
+}
+
+.admin-card {
+    background-color: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #f8fafc;
+}
+
+/* Dark Mode Table Styling */
+.table-custom {
+    --bs-table-bg: transparent;
+    --bs-table-color: #cbd5e1;
+    --bs-table-border-color: #334155;
+    margin-bottom: 0;
+}
+
+.table-custom thead th {
+    background-color: rgba(15, 23, 42, 0.6);
+    color: #94a3b8;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #334155;
+    padding: 1rem;
+}
+
+.table-custom tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.table-custom tbody tr:hover td {
+    background-color: rgba(51, 65, 85, 0.4);
+    color: #f8fafc;
+}
+
+/* Custom Status Badges */
+.badge-custom {
+    padding: 0.4em 0.8em;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-radius: 20px;
+}
+.bg-booked { background-color: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+.bg-transit { background-color: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+.bg-delivered { background-color: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+
+/* ... existing code ... */
+.bg-booked { background-color: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+.bg-transit { background-color: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+.bg-delivered { background-color: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+
+/* Custom Form Styling /
+/ STREAMING_CHUNK:Adding dark mode form overrides... */
+.form-custom {
+background-color: #0f172a;
+border: 1px solid #475569; /* Slate 600 */
+color: #f8fafc;
+transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-custom:focus {
+background-color: #0f172a;
+border-color: #3b82f6; /* Blue 500 */
+color: #f8fafc;
+box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25);
+}
+
+.form-custom::placeholder {
+color: #64748b; /* Slate 500 */
+}
+
+/* Hide number arrows for aesthetics */
+.form-custom::-webkit-inner-spin-button,
+.form-custom::-webkit-outer-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}
