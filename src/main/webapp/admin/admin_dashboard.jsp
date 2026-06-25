@@ -1,13 +1,23 @@
+<%@ page import="com.swiftship.model.User" %>
+<%@ page import="com.swiftship.model.Shipment" %>
+<%@ page import="java.util.List" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+    User currentUser = (User) session.getAttribute("user");
+    if (currentUser == null) {
+        response.sendRedirect(request.getContextPath() + "/admin/admin_login.jsp");
+        return;
+    }
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SwiftShip Admin - Dashboard</title>
-    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/admin/style.css">
 </head>
 <body>
 
@@ -16,22 +26,22 @@
         <aside class="sidebar d-none d-lg-flex flex-column flex-shrink-0">
             <div class="brand-header p-4 border-bottom border-secondary">
                 <h1 class="m-0"><i class="bi bi-box-seam-fill text-primary me-2"></i>SwiftShip</h1>
-                <p class="text-muted small m-0 mt-1">Admin Portal</p>
+                <p class="small m-0 mt-1">Admin Portal</p>
             </div>
             <nav class="nav flex-column flex-grow-1 py-3 overflow-auto">
-                <a href="admin_dashboard.html" class="nav-item-link active">
+                <a href="<%=request.getContextPath()%>/DashboardServlet" class="nav-item-link active">
                     <i class="bi bi-grid-1x2-fill"></i> DASHBOARD HOME
                 </a>
-                <a href="admin_register.html" class="nav-item-link">
+                <a href="<%=request.getContextPath()%>/admin/admin_register.jsp" class="nav-item-link">
                     <i class="bi bi-pencil-square"></i> REGISTER SHIPMENT
                 </a>
-                <a href="admin_update.html" class="nav-item-link">
+                <a href="<%=request.getContextPath()%>/UpdateStatusServlet?action=list" class="nav-item-link">
                     <i class="bi bi-arrow-repeat"></i> UPDATE STATUS
                 </a>
-                <a href="admin_compare.html" class="nav-item-link">
+                <a href="<%=request.getContextPath()%>/admin/admin_compare.jsp" class="nav-item-link">
                     <i class="bi bi-calculator-fill"></i> COMPARE RATES
                 </a>
-                <a href="admin_reports.html" class="nav-item-link">
+                <a href="<%=request.getContextPath()%>/admin/admin_reports.jsp" class="nav-item-link">
                     <i class="bi bi-bar-chart-fill"></i> REPORTS
                 </a>
             </nav>
@@ -50,9 +60,9 @@
                 <div class="d-flex align-items-center gap-4">
                     <div class="d-none d-md-flex align-items-center gap-2 text-light">
                         <i class="bi bi-person-circle fs-4 text-secondary"></i>
-                        <span class="fw-medium">Admin User (Staff)</span>
+                        <span class="fw-medium"><%= currentUser.getName() %> (<%= currentUser.getRole() %>)</span>
                     </div>
-                    <a href="admin_login.html" class="btn btn-outline-danger btn-sm px-3 fw-medium">
+                    <a href="<%=request.getContextPath()%>/LogoutServlet" class="btn btn-outline-danger btn-sm px-3 fw-medium">
                         <i class="bi bi-box-arrow-right me-1"></i> Logout
                     </a>
                 </div>
@@ -63,20 +73,20 @@
                 <div class="row g-4 mb-4">
                     <div class="col-12 col-md-4">
                         <div class="admin-card p-4 text-center h-100">
-                            <h3 class="text-uppercase text-muted fs-6 fw-bold mb-2">Total Shipments (This Month)</h3>
-                            <div class="stat-value">1,284</div>
+                            <h3 class="text-uppercase fs-6 fw-bold mb-2">Total Shipments</h3>
+                            <div class="stat-value"><%= request.getAttribute("totalShipments") != null ? request.getAttribute("totalShipments") : "0" %></div>
                         </div>
                     </div>
                     <div class="col-12 col-md-4">
                         <div class="admin-card p-4 text-center h-100">
-                            <h3 class="text-uppercase text-muted fs-6 fw-bold mb-2">Currently In Transit</h3>
-                            <div class="stat-value text-warning">342</div>
+                            <h3 class="text-uppercase fs-6 fw-bold mb-2">Currently In Transit</h3>
+                            <div class="stat-value text-warning"><%= request.getAttribute("inTransit") != null ? request.getAttribute("inTransit") : "0" %></div>
                         </div>
                     </div>
                     <div class="col-12 col-md-4">
                         <div class="admin-card p-4 text-center h-100">
-                            <h3 class="text-uppercase text-muted fs-6 fw-bold mb-2">Delivered Today</h3>
-                            <div class="stat-value text-success">89</div>
+                            <h3 class="text-uppercase fs-6 fw-bold mb-2">Delivered</h3>
+                            <div class="stat-value text-success"><%= request.getAttribute("delivered") != null ? request.getAttribute("delivered") : "0" %></div>
                         </div>
                     </div>
                 </div>
@@ -84,7 +94,7 @@
                 <div class="admin-card">
                     <div class="p-4 border-bottom border-secondary d-flex justify-content-between align-items-center">
                         <h3 class="m-0 text-light fs-5 fw-semibold">Recent Shipments</h3>
-                        <button class="btn btn-sm btn-outline-primary"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
+                        <a href="<%=request.getContextPath()%>/DashboardServlet" class="btn btn-sm btn-outline-primary"><i class="bi bi-arrow-clockwise"></i> Refresh</a>
                     </div>
                     
                     <div class="table-responsive">
@@ -94,44 +104,43 @@
                                     <th scope="col">Tracking Number</th>
                                     <th scope="col">Sender Name</th>
                                     <th scope="col">Carrier</th>
-                                    <th scope="col">Date Booked</th>
                                     <th scope="col">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                <%
+                                    List<Shipment> recentShipments = (List<Shipment>) request.getAttribute("recentShipments");
+                                    if (recentShipments != null && !recentShipments.isEmpty()) {
+                                        for (Shipment s : recentShipments) {
+                                            String carrierName = "Unknown Carrier";
+                                            String iconColor = "text-secondary";
+                                            if (s.getCarrierId() == 1) { carrierName = "DHL Express"; iconColor = "text-warning"; }
+                                            else if (s.getCarrierId() == 2) { carrierName = "Pos Laju"; iconColor = "text-danger"; }
+                                            else if (s.getCarrierId() == 5) { carrierName = "J&T Express"; iconColor = "text-danger"; }
+
+                                            String badgeClass = "bg-secondary";
+                                            if ("Delivered".equals(s.getStatus())) badgeClass = "bg-delivered";
+                                            else if ("In Transit".equals(s.getStatus())) badgeClass = "bg-transit";
+                                            else if ("Booked".equals(s.getStatus())) badgeClass = "bg-booked";
+                                %>
                                 <tr>
-                                    <td><strong class="text-light">ABCD123456789</strong></td>
-                                    <td>Izuddin</td>
+                                    <td><strong class="text-light"><%= s.getTrackingNumber() %></strong></td>
+                                    <td><%= s.getSenderName() %></td>
                                     <td>
                                         <span class="d-inline-flex align-items-center gap-1">
-                                            <i class="bi bi-truck text-warning"></i> DHL
+                                            <i class="bi bi-truck <%= iconColor %>"></i> <%= carrierName %>
                                         </span>
                                     </td>
-                                    <td>15 June, 2026</td>
-                                    <td><span class="badge-custom bg-transit">In Transit</span></td>
+                                    <td><span class="badge-custom <%= badgeClass %>"><%= s.getStatus() %></span></td>
                                 </tr>
+                                <%
+                                        }
+                                    } else {
+                                %>
                                 <tr>
-                                    <td><strong class="text-light">POSL987654321</strong></td>
-                                    <td>Hazrel</td>
-                                    <td>
-                                        <span class="d-inline-flex align-items-center gap-1">
-                                            <i class="bi bi-truck text-danger"></i> Pos Laju
-                                        </span>
-                                    </td>
-                                    <td>16 June, 2026</td>
-                                    <td><span class="badge-custom bg-booked">Booked</span></td>
+                                    <td colspan="4" class="text-center py-4">No recent shipments found.</td>
                                 </tr>
-                                <tr>
-                                    <td><strong class="text-light">JNT555444333</strong></td>
-                                    <td>Muthu</td>
-                                    <td>
-                                        <span class="d-inline-flex align-items-center gap-1">
-                                            <i class="bi bi-truck text-danger"></i> J&T
-                                        </span>
-                                    </td>
-                                    <td>12 June, 2026</td>
-                                    <td><span class="badge-custom bg-delivered">Delivered.</span></td>
-                                </tr>
+                                <% } %>
                             </tbody>
                         </table>
                     </div>

@@ -1,10 +1,10 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SwiftShip - Track Your Parcel</title>
-    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="style.css">
@@ -13,16 +13,14 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-brand shadow-sm sticky-top">
         <div class="container">
-            <a class="navbar-brand fw-bold fs-4" href="index.html">SwiftShip</a>
-            
+            <a class="navbar-brand fw-bold fs-4" href="index.jsp">SwiftShip</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active fw-medium" aria-current="page" href="index.html">Home</a>
+                        <a class="nav-link active fw-medium" aria-current="page" href="index.jsp">Home</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="rate_comparison.html">Rate Comparison</a>
@@ -32,7 +30,7 @@
                     </li>
                 </ul>
                 <div class="d-flex">
-                    <a href="admin/admin_login.html" class="btn btn-outline-light px-4 rounded-pill">Admin Login</a>
+                    <a href="admin/admin_login.jsp" class="btn btn-outline-light px-4 rounded-pill">Admin Login</a>
                 </div>
             </div>
         </div>
@@ -42,30 +40,25 @@
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-12 col-md-10 col-lg-8 col-xl-6">
-                    
                     <div class="card shadow border-0 rounded-4 p-4 p-md-5">
                         <div class="card-body text-center">
                             <h1 class="text-brand fw-bold mb-3">Track Your Shipment</h1>
                             <p class="text-muted mb-4">Enter your tracking number below to see the current status of your parcel.</p>
                             
-                            <div class="input-group input-group-lg mb-3">
-                                <input type="text" class="form-control bg-light" id="trackingInput" placeholder="e.g., DHL123456789" aria-label="Tracking Number">
-                                <button class="btn btn-brand px-4 fw-medium" type="button" id="trackBtn">Track Parcel</button>
-                            </div>
-                            
-                            <div id="error-msg" class="text-danger mt-2 fw-medium d-none text-start">
-                                <i class="bi bi-exclamation-circle me-1"></i> Please enter a valid tracking number.
-                            </div>
-                            
-                            <div id="tracking-result-msg" class="alert alert-success mt-4 d-none text-start" role="alert">
-                                <h4 class="alert-heading fs-5"><i class="bi bi-check-circle-fill me-2"></i>Status Found!</h4>
-                                <hr>
-                                <p class="mb-0">Tracking record located for: <strong id="tracked-id"></strong>. Redirecting to timeline...</p>
-                            </div>
+                            <% if ("not_found".equals(request.getParameter("error"))) { %>
+                                <div class="alert alert-danger mt-2 fw-medium text-start" role="alert">
+                                    <i class="bi bi-exclamation-circle me-1"></i> We couldn't find a shipment with that tracking number. Please check and try again.
+                                </div>
+                            <% } %>
 
+                            <form action="<%=request.getContextPath()%>/TrackingServlet" method="GET">
+                                <div class="input-group input-group-lg mb-3">
+                                    <input type="text" class="form-control bg-light" name="trackingNumber" id="trackingInput" placeholder="e.g., DHL123456789" required aria-label="Tracking Number">
+                                    <button class="btn btn-brand px-4 fw-medium" type="submit">Track Parcel</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -91,27 +84,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.getElementById('trackBtn').addEventListener('click', function() {
-            const input = document.getElementById('trackingInput').value.trim();
-            const errorMsg = document.getElementById('error-msg');
-            const successMsg = document.getElementById('tracking-result-msg');
-            const trackedIdDisplay = document.getElementById('tracked-id');
-
-            errorMsg.classList.add('d-none');
-            successMsg.classList.add('d-none');
-
-            if(input === "") {
-                errorMsg.classList.remove('d-none');
-            } else {
-                trackedIdDisplay.innerText = input;
-                successMsg.classList.remove('d-none');
-                
-                setTimeout(() => {
-                    window.location.href = "tracking.html";
-                }, 1500);
-            }
-        });
-
         function toggleChat() {
             const chatWindow = document.getElementById('chatWindow');
             if (chatWindow.style.display === "none" || chatWindow.style.display === "") {
