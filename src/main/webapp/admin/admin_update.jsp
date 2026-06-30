@@ -18,21 +18,38 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="<%=request.getContextPath()%>/admin/style.css">
+    
+    <script src="<%=request.getContextPath()%>/theme.js"></script>    
 </head>
 <body>
 
-<div class="d-flex min-vh-100">
+<div class="d-flex vh-100 overflow-hidden">
     <aside class="sidebar d-none d-lg-flex flex-column flex-shrink-0">
         <div class="brand-header p-4 border-bottom border-secondary">
             <h1 class="m-0"><i class="bi bi-box-seam-fill text-primary me-2"></i>SwiftShip</h1>
             <p class="small m-0 mt-1">Admin Portal</p>
         </div>
         <nav class="nav flex-column flex-grow-1 py-3 overflow-auto">
-            <a href="<%=request.getContextPath()%>/admin/admin_dashboard.jsp" class="nav-item-link"><i class="bi bi-grid-1x2-fill"></i> DASHBOARD HOME</a>
-            <a href="<%=request.getContextPath()%>/admin/admin_register.jsp" class="nav-item-link"><i class="bi bi-pencil-square"></i> REGISTER SHIPMENT</a>
-            <a href="<%=request.getContextPath()%>/UpdateStatusServlet?action=list" class="nav-item-link active"><i class="bi bi-arrow-repeat"></i> UPDATE STATUS</a>
-            <a href="<%=request.getContextPath()%>/admin/admin_compare.jsp" class="nav-item-link"><i class="bi bi-calculator-fill"></i> COMPARE RATES</a>
-            <a href="<%=request.getContextPath()%>/admin/admin_reports.jsp" class="nav-item-link"><i class="bi bi-bar-chart-fill"></i> REPORTS</a>
+            <a href="<%=request.getContextPath()%>/DashboardServlet" class="nav-item-link">
+                <i class="bi bi-grid-1x2-fill"></i> DASHBOARD HOME
+            </a>
+            <a href="<%=request.getContextPath()%>/admin/admin_register.jsp" class="nav-item-link">
+                <i class="bi bi-pencil-square"></i> REGISTER SHIPMENT
+            </a>
+            <a href="<%=request.getContextPath()%>/UpdateStatusServlet?action=list" class="nav-item-link active">
+                <i class="bi bi-arrow-repeat"></i> UPDATE STATUS
+            </a>
+            <a href="<%=request.getContextPath()%>/admin/admin_compare.jsp" class="nav-item-link">
+                <i class="bi bi-calculator-fill"></i> COMPARE RATES
+            </a>
+            <% if ("Admin".equalsIgnoreCase(currentUser.getRole())) { %>
+            <a href="<%=request.getContextPath()%>/admin/admin_reports.jsp" class="nav-item-link">
+                <i class="bi bi-bar-chart-fill"></i> REPORTS
+            </a>
+            <a href="<%=request.getContextPath()%>/admin/admin_users.jsp" class="nav-item-link">
+                <i class="bi bi-people-fill"></i> MANAGE USERS
+            </a>
+            <% } %>
         </nav>
     </aside>
 
@@ -46,6 +63,9 @@
             </div>
             
             <div class="d-flex align-items-center gap-4">
+                <button class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center p-2" onclick="toggleTheme()" title="Toggle Light/Dark Mode" style="width: 40px; height: 40px;">
+        	        <i class="bi theme-icon-toggle fs-5"></i>
+                </button>
                 <div class="d-none d-md-flex align-items-center gap-2 text-light">
                     <i class="bi bi-person-circle fs-4 text-secondary"></i>
                     <span class="fw-medium"><%= currentUser.getName() %> (<%= currentUser.getRole() %>)</span>
@@ -92,7 +112,7 @@
                 <% } %>
 
                 <div class="table-responsive">
-                    <table class="table table-dark table-hover align-middle">
+                    <table class="table table-custom table-hover align-middle">
                         <thead>
                             <tr>
                                 <th>Tracking #</th>
@@ -124,7 +144,7 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <button class="btn btn-sm btn-outline-light" 
+                                    <button class="btn btn-outline-primary" 
                                             onclick="openUpdateModal('<%= s.getTrackingNumber() %>')">
                                         Update
                                     </button>
@@ -135,12 +155,37 @@
                                 } else { 
                             %>
                             <tr>
-                                <td colspan="5" class="text-center text-muted py-4">No shipments available.</td>
+                                <td colspan="5" class="text-center py-4">No shipments available.</td>
                             </tr>
                             <% } %>
                         </tbody>
                     </table>
                 </div>
+                
+                <!-- Pagination Controls added here -->
+                <%
+                    Integer currentPageAttr = (Integer) request.getAttribute("currentPage");
+                    Integer totalPagesAttr = (Integer) request.getAttribute("totalPages");
+                    
+                    if (currentPageAttr != null && totalPagesAttr != null && totalPagesAttr > 1) {
+                        int currentPage = currentPageAttr;
+                        int totalPages = totalPagesAttr;
+                %>
+                <div class="d-flex justify-content-between align-items-center mt-4 border-top border-secondary pt-3">
+                    <span class="small">Showing page <%= currentPage %> of <%= totalPages %></span>
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination pagination-sm mb-0 custom-pagination">
+                            <li class="page-item <%= (currentPage == 1) ? "disabled" : "" %>">
+                                <a class="page-link bg-dark text-light border-secondary" href="?action=list&page=<%= currentPage - 1 %>">Previous</a>
+                            </li>
+                            <li class="page-item <%= (currentPage == totalPages) ? "disabled" : "" %>">
+                                <a class="page-link bg-dark text-light border-secondary" href="?action=list&page=<%= currentPage + 1 %>">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <% } %>
+                
             </div>
         </main>
     </div>

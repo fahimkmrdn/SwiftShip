@@ -13,6 +13,23 @@ import com.swiftship.util.DBConnection;
 
 public class ShipmentDAO {
 
+    // --- HELPER METHOD TO PREVENT INCONSISTENT DATA ---
+    private Shipment mapRowToShipment(ResultSet rs) throws SQLException {
+        Shipment s = new Shipment();
+        s.setShipmentId(rs.getInt("ShipmentID"));
+        s.setTrackingNumber(rs.getString("trackingnumber"));
+        s.setSenderName(rs.getString("sendername"));
+        s.setSenderPhone(rs.getString("senderphone"));
+        s.setSenderAddress(rs.getString("senderaddress"));
+        s.setReceiverName(rs.getString("receivername"));
+        s.setReceiverPhone(rs.getString("receiverphone"));
+        s.setReceiverAddress(rs.getString("receiveraddress"));
+        s.setParcelWeight(rs.getString("parcelweight"));
+        s.setStatus(rs.getString("status"));
+        s.setCarrierId(rs.getInt("carrierID"));
+        return s;
+    }
+
     public boolean registerShipment(Shipment shipment, String adminName) {
         boolean isSuccess = false;
         String insertShipmentSql = "INSERT INTO Shipment (trackingnumber, sendername, senderphone, senderaddress, receivername, receiverphone, receiveraddress, parcelweight, status, carrierID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Booked', ?)";
@@ -62,14 +79,30 @@ public class ShipmentDAO {
              ResultSet rs = ps.executeQuery()) {
             
             while (rs.next()) {
-                Shipment s = new Shipment();
-                s.setShipmentId(rs.getInt("ShipmentID"));
-                s.setTrackingNumber(rs.getString("trackingnumber"));
-                s.setSenderName(rs.getString("sendername"));
-                s.setReceiverAddress(rs.getString("receiveraddress"));
-                s.setStatus(rs.getString("status"));
-                s.setCarrierId(rs.getInt("carrierID"));
-                list.add(s);
+                list.add(mapRowToShipment(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    // --- NEW: Added for Phase 5 Pagination ---
+    public List<Shipment> getPaginatedShipments(int offset, int limit) {
+        List<Shipment> list = new ArrayList<>();
+        // Oracle 12c+ syntax for pagination
+        String sql = "SELECT * FROM Shipment ORDER BY ShipmentID DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+             
+            ps.setInt(1, offset);
+            ps.setInt(2, limit);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapRowToShipment(rs));
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -87,14 +120,7 @@ public class ShipmentDAO {
             ps.setString(1, "%" + trackingNumber.toUpperCase() + "%");
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    Shipment s = new Shipment();
-                    s.setShipmentId(rs.getInt("ShipmentID"));
-                    s.setTrackingNumber(rs.getString("trackingnumber"));
-                    s.setSenderName(rs.getString("sendername"));
-                    s.setReceiverAddress(rs.getString("receiveraddress"));
-                    s.setStatus(rs.getString("status"));
-                    s.setCarrierId(rs.getInt("carrierID"));
-                    list.add(s);
+                    list.add(mapRowToShipment(rs));
                 }
             }
         } catch (SQLException e) {
@@ -152,13 +178,7 @@ public class ShipmentDAO {
             ps.setString(1, trackingNumber.toUpperCase());
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    s = new Shipment();
-                    s.setShipmentId(rs.getInt("ShipmentID"));
-                    s.setTrackingNumber(rs.getString("trackingnumber"));
-                    s.setSenderName(rs.getString("sendername"));
-                    s.setReceiverAddress(rs.getString("receiveraddress"));
-                    s.setStatus(rs.getString("status"));
-                    s.setCarrierId(rs.getInt("carrierID"));
+                    s = mapRowToShipment(rs);
                 }
             }
         } catch (SQLException e) {
@@ -244,13 +264,7 @@ public class ShipmentDAO {
             ps.setInt(1, limit);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    Shipment s = new Shipment();
-                    s.setShipmentId(rs.getInt("ShipmentID"));
-                    s.setTrackingNumber(rs.getString("trackingnumber"));
-                    s.setSenderName(rs.getString("sendername"));
-                    s.setStatus(rs.getString("status"));
-                    s.setCarrierId(rs.getInt("carrierID"));
-                    list.add(s);
+                    list.add(mapRowToShipment(rs));
                 }
             }
         } catch (SQLException e) {
@@ -282,14 +296,7 @@ public class ShipmentDAO {
              ResultSet rs = ps.executeQuery()) {
             
             while (rs.next()) {
-                Shipment s = new Shipment();
-                s.setShipmentId(rs.getInt("ShipmentID"));
-                s.setTrackingNumber(rs.getString("trackingnumber"));
-                s.setSenderName(rs.getString("sendername"));
-                s.setReceiverAddress(rs.getString("receiveraddress"));
-                s.setStatus(rs.getString("status"));
-                s.setCarrierId(rs.getInt("carrierID"));
-                list.add(s);
+                list.add(mapRowToShipment(rs));
             }
         } catch (SQLException e) {
             e.printStackTrace();

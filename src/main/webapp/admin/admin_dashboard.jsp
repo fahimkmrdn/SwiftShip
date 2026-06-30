@@ -18,10 +18,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="<%=request.getContextPath()%>/admin/style.css">
+    
+    <script src="<%=request.getContextPath()%>/theme.js"></script>
 </head>
 <body>
 
-    <div class="d-flex min-vh-100">
+    <div class="d-flex vh-100 overflow-hidden">
         
         <aside class="sidebar d-none d-lg-flex flex-column flex-shrink-0">
             <div class="brand-header p-4 border-bottom border-secondary">
@@ -41,9 +43,14 @@
                 <a href="<%=request.getContextPath()%>/admin/admin_compare.jsp" class="nav-item-link">
                     <i class="bi bi-calculator-fill"></i> COMPARE RATES
                 </a>
-                <a href="<%=request.getContextPath()%>/admin/admin_reports.jsp" class="nav-item-link">
+                <% if ("Admin".equalsIgnoreCase(currentUser.getRole())) { %>
+                <a href="<%=request.getContextPath()%>/ReportServlet" class="nav-item-link">
                     <i class="bi bi-bar-chart-fill"></i> REPORTS
                 </a>
+                <a href="<%=request.getContextPath()%>/UserManagementServlet" class="nav-item-link">
+                    <i class="bi bi-people-fill"></i> MANAGE USERS
+                </a>
+                <% } %>
             </nav>
         </aside>
 
@@ -58,7 +65,11 @@
                 </div>
                 
                 <div class="d-flex align-items-center gap-4">
-                    <div class="d-none d-md-flex align-items-center gap-2 text-light">
+                    <button class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center p-2" onclick="toggleTheme()" title="Toggle Light/Dark Mode" style="width: 40px; height: 40px;">
+                        <i class="bi theme-icon-toggle fs-5"></i>
+                    </button>
+
+                    <div class="d-none d-md-flex align-items-center gap-2 text-light border-start border-secondary ps-3 ms-1">
                         <i class="bi bi-person-circle fs-4 text-secondary"></i>
                         <span class="fw-medium"><%= currentUser.getName() %> (<%= currentUser.getRole() %>)</span>
                     </div>
@@ -70,21 +81,29 @@
 
             <main class="p-4 flex-grow-1 overflow-auto">
                 
+                <% if ("unauthorized".equals(request.getParameter("error"))) { %>
+                <div class="alert alert-danger alert-dismissible fade show mb-4 shadow-sm" role="alert">
+                    <i class="bi bi-shield-lock-fill me-2 fs-5"></i>
+                    <strong>Access Denied:</strong> You do not have administrator privileges to view that page.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <% } %>
+
                 <div class="row g-4 mb-4">
                     <div class="col-12 col-md-4">
                         <div class="admin-card p-4 text-center h-100">
                             <h3 class="text-uppercase fs-6 fw-bold mb-2">Total Shipments</h3>
-                            <div class="stat-value"><%= request.getAttribute("totalShipments") != null ? request.getAttribute("totalShipments") : "0" %></div>
+                            <div class="stat-value text-light"><%= request.getAttribute("totalShipments") != null ? request.getAttribute("totalShipments") : "0" %></div>
                         </div>
                     </div>
                     <div class="col-12 col-md-4">
-                        <div class="admin-card p-4 text-center h-100">
+                        <div class="admin-card p-4 text-center h-100 border-warning border-opacity-50">
                             <h3 class="text-uppercase fs-6 fw-bold mb-2">Currently In Transit</h3>
                             <div class="stat-value text-warning"><%= request.getAttribute("inTransit") != null ? request.getAttribute("inTransit") : "0" %></div>
                         </div>
                     </div>
                     <div class="col-12 col-md-4">
-                        <div class="admin-card p-4 text-center h-100">
+                        <div class="admin-card p-4 text-center h-100 border-success border-opacity-50">
                             <h3 class="text-uppercase fs-6 fw-bold mb-2">Delivered</h3>
                             <div class="stat-value text-success"><%= request.getAttribute("delivered") != null ? request.getAttribute("delivered") : "0" %></div>
                         </div>

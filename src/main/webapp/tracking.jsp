@@ -28,9 +28,15 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="style.css">
+    
+    <style>
+        [data-bs-theme="dark"] .text-brand { color: #6eb6ff !important; }
+        [data-bs-theme="dark"] .timeline { border-left-color: #333 !important; }
+    </style>
+    
+    <script src="<%=request.getContextPath()%>/theme.js"></script>
 </head>
 <body class="d-flex flex-column min-vh-100">
-
     <nav class="navbar navbar-expand-lg navbar-dark bg-brand shadow-sm sticky-top">
         <div class="container">
             <a class="navbar-brand fw-bold fs-4" href="index.jsp">SwiftShip</a>
@@ -46,11 +52,14 @@
                         <a class="nav-link" href="rate_comparison.html">Rate Comparison</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="about_us.html">About Us</a>
+                        <a class="nav-link" href="about_us.jsp">About Us</a>
                     </li>
                 </ul>
-                <div class="d-flex">
+                <div class="d-flex align-items-center gap-4">
                     <a href="admin/admin_login.jsp" class="btn btn-outline-light px-4 rounded-pill">Admin Login</a>
+                    <button class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center p-2" onclick="toggleTheme()" title="Toggle Light/Dark Mode" style="width: 35px; height: 35px;">
+                        <i class="bi theme-icon-toggle fs-5"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -71,7 +80,7 @@
                             <div class="row text-center text-md-start g-3">
                                 <div class="col-12 col-md-4 border-md-end border-secondary-subtle">
                                     <span class="text-muted text-uppercase fw-semibold" style="letter-spacing: 1px; font-size: 0.8rem;">Carrier</span>
-                                    <div class="fs-5 fw-bold text-dark mt-1"><i class="bi bi-truck me-2 text-brand"></i><%= carrierName %></div>
+                                    <div class="fs-5 fw-bold text-body-emphasis mt-1"><i class="bi bi-truck me-2 text-brand"></i><%= carrierName %></div>
                                 </div>
                                 <div class="col-12 col-md-4 border-md-end border-secondary-subtle">
                                     <span class="text-muted text-uppercase fw-semibold" style="letter-spacing: 1px; font-size: 0.8rem;">Current Status</span>
@@ -79,13 +88,13 @@
                                 </div>
                                 <div class="col-12 col-md-4">
                                     <span class="text-muted text-uppercase fw-semibold" style="letter-spacing: 1px; font-size: 0.8rem;">Destination</span>
-                                    <div class="fs-5 fw-bold text-dark mt-1"><i class="bi bi-geo-alt-fill me-2 text-brand"></i><%= shipment.getReceiverAddress() %></div>
+                                    <div class="fs-5 fw-bold text-body-emphasis mt-1"><i class="bi bi-geo-alt-fill me-2 text-brand"></i><%= shipment.getReceiverAddress() %></div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="timeline-container bg-white p-4 p-md-5 rounded-4 shadow-sm border-0">
+                    <div class="timeline-container card bg-light p-4 p-md-5 rounded-4 shadow-sm border-0">
                         <h3 class="fw-bold text-brand mb-4">Tracking History</h3>
                         
                         <div class="timeline">
@@ -100,11 +109,11 @@
                             <div class="timeline-item completed">
                                 <div class="timeline-date fw-medium"><%= sdf.format(h.getTimestamp()) %></div>
                                 <div class="timeline-content bg-light border p-3 rounded-3 mt-2 shadow-sm">
-                                    <strong class="fs-5 text-dark"><i class="bi <%= icon %> text-brand me-2"></i><%= h.getStatus() %></strong>
+                                    <strong class="fs-5 text-body-emphasis"><i class="bi <%= icon %> text-brand me-2"></i><%= h.getStatus() %></strong>
                                     <p class="text-muted mt-1 mb-0">Status updated by <%= h.getUpdatedBy() != null ? h.getUpdatedBy() : "System" %></p>
                                 </div>
                             </div>
-                            <% 
+                            <%  
                                     } 
                                 } else { 
                             %>

@@ -13,14 +13,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SwiftShip Admin - Register Shipment</title>
-    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/admin/style.css">
+    
+    <script src="<%=request.getContextPath()%>/theme.js"></script>
 </head>
 <body>
 
-    <div class="d-flex min-vh-100">
+    <div class="d-flex vh-100 overflow-hidden">
         
         <aside class="sidebar d-none d-lg-flex flex-column flex-shrink-0">
             <div class="brand-header p-4 border-bottom border-secondary">
@@ -28,20 +29,26 @@
                 <p class="small m-0 mt-1">Admin Portal</p>
             </div>
             <nav class="nav flex-column flex-grow-1 py-3 overflow-auto">
-                <a href="admin_dashboard.jsp" class="nav-item-link">
+                <a href="<%=request.getContextPath()%>/DashboardServlet" class="nav-item-link">
                     <i class="bi bi-grid-1x2-fill"></i> DASHBOARD HOME
                 </a>
-                <a href="admin_register.jsp" class="nav-item-link active">
+                <a href="<%=request.getContextPath()%>/admin/admin_register.jsp" class="nav-item-link active">
                     <i class="bi bi-pencil-square"></i> REGISTER SHIPMENT
                 </a>
-				<a href="<%=request.getContextPath()%>/UpdateStatusServlet?action=list" class="nav-item-link">                    <i class="bi bi-arrow-repeat"></i> UPDATE STATUS
+                <a href="<%=request.getContextPath()%>/UpdateStatusServlet?action=list" class="nav-item-link">
+                    <i class="bi bi-arrow-repeat"></i> UPDATE STATUS
                 </a>
-                <a href="admin_compare.jsp" class="nav-item-link">
+                <a href="<%=request.getContextPath()%>/admin/admin_compare.jsp" class="nav-item-link">
                     <i class="bi bi-calculator-fill"></i> COMPARE RATES
                 </a>
-                <a href="admin_reports.jsp" class="nav-item-link">
+                <% if ("Admin".equalsIgnoreCase(currentUser.getRole())) { %>
+                <a href="<%=request.getContextPath()%>/admin/admin_reports.jsp" class="nav-item-link">
                     <i class="bi bi-bar-chart-fill"></i> REPORTS
                 </a>
+                <a href="<%=request.getContextPath()%>/admin/admin_users.jsp" class="nav-item-link">
+                    <i class="bi bi-people-fill"></i> MANAGE USERS
+                </a>
+                <% } %>
             </nav>
         </aside>
 
@@ -56,7 +63,11 @@
                 </div>
                 
                 <div class="d-flex align-items-center gap-4">
-                    <div class="d-none d-md-flex align-items-center gap-2 text-light">
+                    <button class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center p-2" onclick="toggleTheme()" title="Toggle Light/Dark Mode" style="width: 40px; height: 40px;">
+                        <i class="bi theme-icon-toggle fs-5"></i>
+                    </button>
+
+                    <div class="d-none d-md-flex align-items-center gap-2 text-light border-start border-secondary ps-3 ms-1">
                         <i class="bi bi-person-circle fs-4 text-secondary"></i>
                         <span class="fw-medium"><%= currentUser.getName() %> (<%= currentUser.getRole() %>)</span>
                     </div>

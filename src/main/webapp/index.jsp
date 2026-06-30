@@ -8,6 +8,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="style.css">
+    
+    <script src="<%=request.getContextPath()%>/theme.js"></script>
 </head>
 <body class="d-flex flex-column min-vh-100">
 
@@ -26,12 +28,16 @@
                         <a class="nav-link" href="rate_comparison.html">Rate Comparison</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="about_us.html">About Us</a>
+                        <a class="nav-link" href="about_us.jsp">About Us</a>
                     </li>
                 </ul>
-                <div class="d-flex">
+                <div class="d-flex align-items-center gap-4">
                     <a href="admin/admin_login.jsp" class="btn btn-outline-light px-4 rounded-pill">Admin Login</a>
+                    <button class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center p-2" onclick="toggleTheme()" title="Toggle Light/Dark Mode" style="width: 35px; height: 35px;">
+                        <i class="bi theme-icon-toggle fs-5"></i>
+                    </button>
                 </div>
+                	
             </div>
         </div>
     </nav>
