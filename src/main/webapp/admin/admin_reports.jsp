@@ -8,6 +8,10 @@
         response.sendRedirect(request.getContextPath() + "/admin/admin_login.jsp");
         return;
     }
+    if (!"Admin".equalsIgnoreCase(currentUser.getRole())) {
+        response.sendRedirect(request.getContextPath() + "/DashboardServlet?error=unauthorized");
+        return;
+    }
     List<Shipment> reportList = (List<Shipment>) request.getAttribute("reportList");
 %>
 <!DOCTYPE html>
@@ -19,10 +23,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="<%=request.getContextPath()%>/admin/style.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="<%=request.getContextPath()%>/theme.js"></script>
 </head>
 <body>
 
-    <div class="d-flex min-vh-100">
+    <div class="d-flex vh-100 overflow-hidden">
         
         <aside class="sidebar d-none d-lg-flex flex-column flex-shrink-0">
             <div class="brand-header p-4 border-bottom border-secondary">
@@ -42,8 +49,11 @@
                 <a href="<%=request.getContextPath()%>/admin/admin_compare.jsp" class="nav-item-link">
                     <i class="bi bi-calculator-fill"></i> COMPARE RATES
                 </a>
-                <a href="<%=request.getContextPath()%>/admin/admin_reports.jsp" class="nav-item-link active">
+                <a href="<%=request.getContextPath()%>/ReportServlet" class="nav-item-link active">
                     <i class="bi bi-bar-chart-fill"></i> REPORTS
+                </a>
+                <a href="<%=request.getContextPath()%>/UserManagementServlet" class="nav-item-link">
+                    <i class="bi bi-people-fill"></i> MANAGE USERS
                 </a>
             </nav>
         </aside>
@@ -59,7 +69,11 @@
                 </div>
                 
                 <div class="d-flex align-items-center gap-4">
-                    <div class="d-none d-md-flex align-items-center gap-2 text-light">
+                    <button class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center p-2" onclick="toggleTheme()" title="Toggle Light/Dark Mode" style="width: 40px; height: 40px;">
+                        <i class="bi theme-icon-toggle fs-5"></i>
+                    </button>
+
+                    <div class="d-none d-md-flex align-items-center gap-2 text-light border-start border-secondary ps-3 ms-1">
                         <i class="bi bi-person-circle fs-4 text-secondary"></i>
                         <span class="fw-medium"><%= currentUser.getName() %> (<%= currentUser.getRole() %>)</span>
                     </div>
@@ -132,6 +146,25 @@
                             <div class="admin-card p-4 text-center h-100 border-warning border-opacity-50">
                                 <h4 class="text-uppercase fs-6 fw-bold mb-2">Pending / Transit</h4>
                                 <div class="stat-value text-warning" id="kpiPending"><%= request.getAttribute("pendingCount") != null ? request.getAttribute("pendingCount") : "0" %></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-4 mb-4">
+                        <div class="col-12 col-md-6">
+                            <div class="admin-card p-4 h-100">
+                                <h4 class="text-light fs-6 fw-bold mb-3 text-center">Carrier Distribution</h4>
+                                <div style="position: relative; height: 250px; width: 100%;">
+                                    <canvas id="carrierChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="admin-card p-4 h-100">
+                                <h4 class="text-light fs-6 fw-bold mb-3 text-center">Shipment Statuses</h4>
+                                <div style="position: relative; height: 250px; width: 100%;">
+                                    <canvas id="statusChart"></canvas>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -229,6 +262,44 @@
             link.click();
             document.body.removeChild(link);
         }
+
+        <% if (request.getAttribute("reportList") != null) { %>
+            const carrierCtx = document.getElementById('carrierChart').getContext('2d');
+            new Chart(carrierCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['DHL Express', 'Pos Laju', 'J&T Express'],
+                    datasets: [{
+                        data: <%= request.getAttribute("carrierData") != null ? request.getAttribute("carrierData") : "[0,0,0]" %>,
+                        backgroundColor: ['#f59e0b', '#ef4444', '#dc2626'],
+                        borderWidth: 0
+                    }]
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: { legend: { labels: { color: '#9ca3af' } } } 
+                }
+            });
+
+            const statusCtx = document.getElementById('statusChart').getContext('2d');
+            new Chart(statusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Booked', 'In Transit', 'Delivered'],
+                    datasets: [{
+                        data: <%= request.getAttribute("statusData") != null ? request.getAttribute("statusData") : "[0,0,0]" %>,
+                        backgroundColor: ['#3b82f6', '#f59e0b', '#10b981'],
+                        borderWidth: 0
+                    }]
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: { legend: { labels: { color: '#9ca3af' } } } 
+                }
+            });
+        <% } %>
     </script>
 </body>
 </html>

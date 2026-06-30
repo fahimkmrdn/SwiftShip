@@ -1,3 +1,4 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +8,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="style.css">
+    
+    <style>
+        [data-bs-theme="dark"] .text-brand { color: #6eb6ff !important; }
+        [data-bs-theme="dark"] .timeline { border-left-color: #333 !important; }
+    </style>
+    
+    <script src="<%=request.getContextPath()%>/theme.js"></script>
 </head>
 <body class="d-flex flex-column min-vh-100">
 
@@ -25,11 +33,14 @@
                         <a class="nav-link" href="rate_comparison.html">Rate Comparison</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active fw-medium" aria-current="page" href="about_us.html">About Us</a>
+                        <a class="nav-link active fw-medium" aria-current="page" href="about_us.jsp">About Us</a>
                     </li>
                 </ul>
-                <div class="d-flex">
+                <div class="d-flex align-items-center gap-4">
                     <a href="admin/admin_login.jsp" class="btn btn-outline-light px-4 rounded-pill">Admin Login</a>
+                    <button class="btn btn-outline-light rounded-circle d-flex align-items-center justify-content-center p-2" onclick="toggleTheme()" title="Toggle Light/Dark Mode" style="width: 35px; height: 35px;">
+                        <i class="bi theme-icon-toggle fs-5"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -53,7 +64,7 @@
                     </div>
                 </div>
                 <div class="col-lg-6 ps-lg-5">
-                    <h3 class="fw-bold mb-3 text-dark">Our Mission</h3>
+                    <h3 class="fw-bold mb-3">Our Mission</h3>
                     <p class="text-muted lh-lg">
                         Shipping can be a massive headache for small businesses in Malaysia. We started SwiftShip to change that. Our goal is to give local e-commerce sellers and SMEs a single place to manage all their deliveries without having to juggle multiple courier websites.
                     </p>
@@ -65,7 +76,7 @@
 
             <div class="row align-items-center flex-column-reverse flex-lg-row">
                 <div class="col-lg-6 pe-lg-5 mt-4 mt-lg-0">
-                    <h3 class="fw-bold mb-3 text-dark">Why Choose Us?</h3>
+                    <h3 class="fw-bold mb-3">Why Choose Us?</h3>
                     <p class="text-muted lh-lg">
                         Managing orders should not require keeping five different tabs open on your browser. We built our platform to solve the exact problems we saw local sellers facing every day.
                     </p>

@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpSession;
 
 import com.swiftship.dao.ShipmentDAO;
 import com.swiftship.model.Shipment;
+import com.swiftship.model.User;
 
 @WebServlet("/ReportServlet")
 public class ReportServlet extends HttpServlet {
@@ -32,6 +33,12 @@ public class ReportServlet extends HttpServlet {
             return;
         }
 
+        User currentUser = (User) session.getAttribute("user");
+        if (!"Admin".equalsIgnoreCase(currentUser.getRole())) {
+            response.sendRedirect(request.getContextPath() + "/DashboardServlet?error=unauthorized");
+            return;
+        }
+
         String carrier = request.getParameter("carrierFilter");
         String status = request.getParameter("statusFilter");
         
@@ -48,18 +55,30 @@ public class ReportServlet extends HttpServlet {
             int total = reportList.size();
             int delivered = 0;
             int pending = 0;
+            
+            int dhlCount = 0, poslCount = 0, jntCount = 0;
+            int bookedCount = 0, transitCount = 0;
 
             for (Shipment s : reportList) {
                 if ("Delivered".equals(s.getStatus())) {
                     delivered++;
                 } else {
                     pending++;
+                    if ("Booked".equals(s.getStatus())) bookedCount++;
+                    else if ("In Transit".equals(s.getStatus())) transitCount++;
                 }
+                
+                if (s.getCarrierId() == 1) dhlCount++;
+                else if (s.getCarrierId() == 2) poslCount++;
+                else if (s.getCarrierId() == 5) jntCount++;
             }
 
             request.setAttribute("totalCount", total);
             request.setAttribute("deliveredCount", delivered);
             request.setAttribute("pendingCount", pending);
+            
+            request.setAttribute("carrierData", "[" + dhlCount + "," + poslCount + "," + jntCount + "]");
+            request.setAttribute("statusData", "[" + bookedCount + "," + transitCount + "," + delivered + "]");
         }
 
         request.setAttribute("reportList", reportList);
